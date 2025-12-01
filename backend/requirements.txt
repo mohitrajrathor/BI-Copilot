@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+langchain
+langchain-google-genai
+langchain-community
+sqlalchemy
+pandas
+matplotlib
+python-dotenv
+requests
