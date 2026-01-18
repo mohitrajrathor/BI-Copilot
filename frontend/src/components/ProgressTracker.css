@@ -1,0 +1,60 @@
+.progress-tracker {
+    max-width: 900px;
+    margin: 0 auto 2rem;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    font-size: 0.95rem;
+}
+
+.progress-loading {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: #1976d2;
+    background: #e3f2fd;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+}
+
+.progress-spinner {
+    width: 20px;
+    height: 20px;
+    border: 3px solid #bbdefb;
+    border-top-color: #1976d2;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.progress-complete {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: #2e7d32;
+    background: #e8f5e9;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+}
+
+.complete-icon {
+    font-size: 1.5rem;
+}
+
+.progress-error {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: #c62828;
+    background: #ffebee;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+}
+
+.error-icon {
+    font-size: 1.5rem;
+}

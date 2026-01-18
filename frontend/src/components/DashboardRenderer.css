@@ -1,0 +1,62 @@
+.dashboard-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-header {
+    margin-bottom: 2rem;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 1rem;
+}
+
+.dashboard-header h2 {
+    margin: 0 0 0.5rem;
+    font-size: 1.75rem;
+    color: #1a1a1a;
+}
+
+.dashboard-metadata {
+    margin: 0;
+    font-size: 0.875rem;
+    color: #666;
+}
+
+.charts-grid {
+    display: grid;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.chart-wrapper {
+    min-height: 200px;
+}
+
+.dashboard-insight {
+    display: flex;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border-radius: 12px;
+    margin-top: 2rem;
+}
+
+.insight-icon {
+    font-size: 2rem;
+    line-height: 1;
+}
+
+.insight-content h3 {
+    margin: 0 0 0.5rem;
+    font-size: 1.1rem;
+    color: #92400e;
+}
+
+.insight-content p {
+    margin: 0;
+    color: #78350f;
+    line-height: 1.6;
+}

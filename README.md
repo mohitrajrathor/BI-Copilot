@@ -1,213 +1,322 @@
-# BI-Copilot
+# BI-Copilot: GenAI-Powered Data Analysis System
 
-BI-Copilot is an AI-powered Business Intelligence assistant that enables business users to analyze data and generate visualizations using natural language queries. The system leverages Google's Gemini LLM to automatically generate SQL queries, execute them safely, and create insightful dashboards—all without requiring any technical knowledge from the user.
+A production-ready, multi-agent AI system for analyzing databases using natural language. Built with FastAPI, React, and Google Gemini.
 
-## Features
+## 🎯 Key Features
 
-- **Natural Language to SQL**: Converts plain English questions into SQL queries using Google Gemini
-- **Automated Visualization**: Generates charts (bar, line, scatter, pie) automatically based on query results
-- **Interactive Chat Interface**: Vue.js-based chat UI for seamless user interaction
-- **Real-time Analytics**: Processes data with pandas and displays KPIs and insights
-- **Dashboard Generation**: Creates complete HTML dashboards with charts and data tables
-- **Multi-Database Support**: Works with PostgreSQL, MySQL, BigQuery, and SQLite
+- **Natural Language Queries** - Ask questions in plain English
+- **4-Agent Pipeline** - Orchestrator → Analysis Planner → SQL Generator → Dashboard Generator
+- **Database Safety** - Read-only connections, SQL injection protection, automatic LIMIT enforcement
+- **Smart Caching** - Redis-powered caching at every layer (schema, plans, results, LLM responses)
+- **Modern UI** - Clean React interface with Recharts visualizations
+- **Multiple Chart Types** - KPI cards, line charts, bar charts, pie charts, scatter plots, tables
 
-## Tech Stack
-
-- **Frontend**: Vue.js 3 + TypeScript + Vite
-- **Backend**: FastAPI (Python)
-- **AI/LLM**: Google Gemini (via LangChain)
-- **Database**: SQLAlchemy (supports PostgreSQL, MySQL, BigQuery, SQLite)
-- **Data Processing**: Pandas
-- **Visualization**: Matplotlib
-
-## Project Structure
+## 🏗️ Architecture
 
 ```
-bi-copilot/
-├── backend/
-│   ├── app/
-│   │   ├── agents/
-│   │   │   └── analytics_agent.py    # LangChain + Gemini integration
-│   │   ├── core/
-│   │   │   ├── config.py             # Configuration management
-│   │   │   └── database.py           # Database connection
-│   │   ├── routers/
-│   │   │   └── chat.py               # API endpoints
-│   │   └── utils/
-│   │       └── charting.py           # Matplotlib chart generation
-│   ├── main.py                       # FastAPI application
-│   ├── requirements.txt              # Python dependencies
-│   └── .env                          # Environment variables
-├── frontend/
-│   ├── src/
-│   │   ├── components/
-│   │   │   ├── ChatInterface.vue     # Chat UI component
-│   │   │   └── Dashboard.vue         # Dashboard display component
-│   │   ├── App.vue                   # Main application
-│   │   └── main.ts                   # Entry point
-│   ├── package.json                  # Node dependencies
-│   └── vite.config.ts                # Vite configuration
-├── .gitignore
-└── README.md
+User Query
+    ↓
+[Agent 1: Orchestrator] ─→ Classify intent (trend/comparison/summary/exploration)
+    ↓
+[Agent 2: Analysis Planner] ─→ Convert to structured JSON plan (metrics, dimensions, filters)
+    ↓
+[Agent 3: SQL Generator] ─→ Template-based SQL generation + safe execution
+    ↓
+[Agent 4: Dashboard Generator] ─→ Deterministic chart selection + dashboard spec
+    ↓
+Frontend Renders Dashboard
 ```
 
-## Getting Started
+**Safety First:**
+- ✅ Read-only database connections
+- ✅ SQL keyword blacklist (INSERT, UPDATE, DELETE, DROP, etc.)
+- ✅ Automatic query timeout and row limits
+- ✅ All queries logged
+- ✅ No raw SQL from users
 
-### Prerequisites
+**Performance:**
+- ⚡ Schema cached permanently in Redis
+- ⚡ Query plans cached by intent hash
+- ⚡ SQL results cached with TTL
+- ⚡ LLM responses cached
+- ⚡ Small model (Gemini Flash) for classification
+- ⚡ Large model (Gemini Pro) only for planning
 
-- **Python 3.8+**
-- **Node.js 16+** and npm
+## 📋 Prerequisites
+
+- **Python 3.10+**
+- **Node.js 18+**
+- **Redis** (via Docker or local installation)
 - **Google Gemini API Key** ([Get one here](https://ai.google.dev/))
-- **Database** (PostgreSQL, MySQL, BigQuery, or SQLite)
+- **Database** (SQLite for testing, PostgreSQL/MySQL for production)
 
-### Installation
+## 🚀 Quick Start
 
-#### 1. Clone the Repository
+### 1. Clone and Setup
 
 ```bash
 git clone <repository-url>
-cd bi-copilot
+cd BI-Copilot
 ```
 
-#### 2. Backend Setup
+### 2. Start Redis
 
 ```bash
-# Navigate to backend directory
+docker-compose up -d redis
+```
+
+### 3. Backend Setup
+
+```bash
 cd backend
 
-# Create a virtual environment (recommended)
-python -m venv venv
-
-# Activate virtual environment
-# Windows:
-.\venv\Scripts\activate
-# macOS/Linux:
-source venv/bin/activate
-
-# Install dependencies
+# Install dependencies (using uv or pip)
 pip install -r requirements.txt
 
-# Install database driver (if using PostgreSQL)
-pip install psycopg2
+# Create .env file
+cp .env.example .env
+
+# Edit .env and add your Gemini API key
+# GEMINI_API_KEY=your_key_here
+
+# Create sample database
+python create_sample_db.py
+
+# Start backend server
+uvicorn main:app --reload
+# Backend runs on http://localhost:8000
 ```
 
-#### 3. Configure Environment Variables
-
-Create a `.env` file in the `backend` directory:
-
-```env
-GOOGLE_API_KEY=your_gemini_api_key_here
-DATABASE_URL=your_database_connection_string
-
-# Examples:
-# PostgreSQL: postgresql://user:password@localhost:5432/dbname
-# MySQL: mysql://user:password@localhost:3306/dbname
-# SQLite: sqlite:///./test.db
-# BigQuery: bigquery://project-id/dataset-id
-```
-
-#### 4. Frontend Setup
+### 4. Frontend Setup
 
 ```bash
-# Navigate to frontend directory (from project root)
 cd frontend
 
 # Install dependencies
 npm install
-```
 
-### Running the Application
-
-You need to run both the backend and frontend servers.
-
-#### Start the Backend Server
-
-```bash
-# From the backend directory
-cd backend
-
-# Activate virtual environment if not already active
-# Windows:
-.\venv\Scripts\activate
-# macOS/Linux:
-source venv/bin/activate
-
-# Start the FastAPI server
-uvicorn main:app --reload
-
-# Server will run on http://localhost:8000
-```
-
-#### Start the Frontend Server
-
-```bash
-# From the frontend directory (in a new terminal)
-cd frontend
-
-# Start the development server
+# Start frontend development server
 npm run dev
-
-# Server will run on http://localhost:5173 (or similar)
+# Frontend runs on http://localhost:5173
 ```
 
-### Using the Application
+### 5. Test the Application
 
-1. Open your browser and navigate to the frontend URL (typically `http://localhost:5173`)
-2. Type a natural language query in the chat interface, for example:
+1. Open http://localhost:5173 in your browser
+2. Try example queries like:
    - "Show me total sales by region"
-   - "What are the top 10 customers by revenue?"
-   - "Plot monthly revenue trends"
-3. The system will:
-   - Generate the appropriate SQL query
-   - Execute it against your database
-   - Create visualizations
-   - Display results in an interactive dashboard
+   - "What are the top 10 products by revenue?"
+   - "Plot monthly sales trends"
+   - "Compare product categories"
 
-## API Documentation
+## 📁 Project Structure
 
-Once the backend is running, visit `http://localhost:8000/docs` for interactive API documentation (Swagger UI).
+```
+BI-Copilot/
+├── backend/
+│   ├── app/
+│   │   ├── agents/           # 4 agent implementations
+│   │   │   ├── orchestrator.py
+│   │   │   ├── analysis_planner.py
+│   │   │   ├── sql_generator.py
+│   │   │   └── dashboard_generator.py
+│   │   ├── core/             # Core infrastructure
+│   │   │   ├── config.py
+│   │   │   ├── database.py
+│   │   │   ├── cache.py
+│   │   │   └── schema.py
+│   │   ├── routes/           # API endpoints
+│   │   │   ├── analyze.py
+│   │   │   ├── schema_routes.py
+│   │   │   └── health.py
+│   │   └── utils/            # Utilities
+│   │       ├── sql_templates.py
+│   │       └── chart_mapper.py
+│   ├── main.py               # FastAPI application
+│   ├── create_sample_db.py   # Sample database script
+│   └── requirements.txt
+├── frontend/
+│   ├── src/
+│   │   ├── components/       # React components
+│   │   │   ├── QueryInput.tsx
+│   │   │   ├── ProgressTracker.tsx
+│   │   │   ├── DashboardRenderer.tsx
+│   │   │   └── ChartComponents.tsx
+│   │   ├── hooks/            # Custom hooks
+│   │   │   └── useAnalysis.ts
+│   │   ├── lib/              # API client & types
+│   │   │   ├── api.ts
+│   │   │   └── types.ts
+│   │   └── App.tsx
+│   └── package.json
+└── docker-compose.yml        # Redis & PostgreSQL services
+```
 
-### Main Endpoint
+## 🔧 Configuration
 
-**POST** `/api/chat`
+### Backend (.env)
 
-Request body:
+```env
+GEMINI_API_KEY=your_api_key
+REDIS_URL=redis://localhost:6379
+DATABASE_URL=sqlite+aiosqlite:///./test.db
+
+# Safety limits
+QUERY_TIMEOUT_SECONDS=30
+MAX_ROWS=10000
+
+# LLM models
+CLASSIFICATION_MODEL=gemini-1.5-flash
+PLANNING_MODEL=gemini-1.5-pro
+
+# Caching
+CACHE_TTL_SECONDS=3600
+SCHEMA_CACHE_PERMANENT=true
+
+# Features
+ENABLE_QUERY_LOGGING=true
+ENABLE_INSIGHTS=true
+```
+
+### Frontend (.env)
+
+```env
+VITE_API_URL=http://localhost:8000
+```
+
+## 📊 API Endpoints
+
+### `POST /api/analyze`
+Main analysis endpoint.
+
+**Request:**
 ```json
 {
   "query": "Show me sales by region"
 }
 ```
 
-Response:
+**Response:**
 ```json
 {
-  "answer": "Here is the analysis for: Show me sales by region",
-  "sql": "SELECT region, SUM(sales) FROM sales_table GROUP BY region",
-  "table": "<html table>",
-  "chart": "base64_encoded_image"
+  "intent": "comparison",
+  "plan": {
+    "table": "sales",
+    "metrics": [...],
+    "dimensions": [...]
+  },
+  "sql": "SELECT ...",
+  "data": {
+    "columns": [...],
+    "rows": [...]
+  },
+  "dashboard_spec": {
+    "title": "Sales by Region",
+    "charts": [...],
+    "insight": "..."
+  }
 }
 ```
 
-## Troubleshooting
+### `GET /api/schema/info`
+Get database schema information.
 
-### Backend Issues
+### `GET /api/health`
+Health check endpoints (also `/api/health/redis`, `/api/health/database`).
 
-- **ModuleNotFoundError: No module named 'psycopg2'**: Install the PostgreSQL driver with `pip install psycopg2`
-- **Google Auth Error**: Ensure your `GOOGLE_API_KEY` is set correctly in the `.env` file
-- **Database Connection Error**: Verify your `DATABASE_URL` is correct and the database is accessible
+Visit http://localhost:8000/docs for interactive API documentation.
 
-### Frontend Issues
+## 🧪 Testing
 
-- **CORS Error**: The backend is configured to allow all origins for development. If you encounter CORS issues, check the CORS middleware in `backend/main.py`
-- **Connection Refused**: Ensure the backend server is running on `http://localhost:8000`
+### Sample Queries to Try
 
-## Development
+**Trend Analysis:**
+- "Show sales trends over time"
+- "Plot monthly revenue"
 
-### Adding New Chart Types
+**Comparison:**
+- "Compare sales by region"
+- "Show top customers by revenue"
 
-Edit `backend/app/utils/charting.py` to add new visualization types.
+**Summary:**
+- "Total sales and revenue"
+- "Average order value"
 
-### Customizing the Agent
+**Exploration:**
+- "Top 10 products"
+- "Find highest spending customers"
 
-Modify `backend/app/agents/analytics_agent.py` to change how queries are processed or add new capabilities.
+### Testing Safety Features
 
+The system will block these queries:
+- "DELETE FROM sales"
+- "UPDATE sales SET ..."
+- "DROP TABLE sales"
+
+## 🎨 Customization
+
+### Add New Chart Types
+
+Edit `backend/app/utils/chart_mapper.py` to add chart type logic.
+Edit `frontend/src/components/ChartComponents.tsx` to add React components.
+
+### Change LLM Models
+
+Update `CLASSIFICATION_MODEL` and `PLANNING_MODEL` in `.env`.
+
+### Custom Database
+
+Update `DATABASE_URL` in `.env` to your database connection string.
+
+## 🐛 Troubleshooting
+
+**Redis Connection Error:**
+```bash
+docker-compose up -d redis
+# Or install Redis locally
+```
+
+**Gemini API Error:**
+- Check your API key in `.env`
+- Verify at https://ai.google.dev/
+
+**Database Connection Error:**
+- Verify `DATABASE_URL` format
+- For PostgreSQL: `postgresql+asyncpg://user:pass@host/db`
+- For MySQL: `mysql+aiomysql://user:pass@host/db`
+
+## 📈 Performance Optimization
+
+The system follows these principles:
+
+1. **Cache Everything** - Schema, plans, results, LLM responses
+2. **Use Small Models** - Fast classification with Gemini Flash
+3. **Deterministic Logic** - Chart selection uses rules, not AI
+4. **Async Everywhere** - Full async/await architecture
+5. **Template-Based SQL** - No LLM for SQL generation
+
+**Expected Latency:**
+- First query: < 5 seconds (cold cache)
+- Repeated query: < 500ms (warm cache)
+
+## 🔒 Security
+
+- ❌ No database writes allowed
+- ❌ No raw SQL from users
+- ❌ No SQL comments
+- ❌ No multiple statements
+- ✅ Read-only connections
+- ✅ Query logging
+- ✅ Automatic timeouts
+
+## 📝 License
+
+MIT
+
+## 🤝 Contributing
+
+Contributions welcome! Please open an issue or PR.
+
+---
+
+Built with ❤️ using FastAPI, React, and Google Gemini
