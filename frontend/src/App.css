@@ -1,74 +1,188 @@
+/* CSS Variables */
+:root {
+    --accent-color: #667eea;
+    --accent-hover: #5568d3;
+    --sidebar-bg: #f9fafb;
+    --chat-bg: #ffffff;
+    --user-bubble-bg: #667eea;
+    --assistant-bubble-bg: #f3f4f6;
+    --text-primary: #1a1a1a;
+    --text-secondary: #666666;
+    --text-tertiary: #999999;
+    --border-color: #e5e7eb;
+    --card-bg: #ffffff;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] {
+    --sidebar-bg: #1a1a1a;
+    --chat-bg: #0f0f0f;
+    --user-bubble-bg: #667eea;
+    --assistant-bubble-bg: #2d2d2d;
+    --text-primary: #ffffff;
+    --text-secondary: #e5e7eb;
+    --text-tertiary: #999999;
+    --border-color: #333333;
+    --card-bg: #2d2d2d;
+}
+
 * {
     box-sizing: border-box;
 }
 
-body {
+html,
+body,
+#root {
+    height: 100%;
+    width: 100%;
     margin: 0;
+    padding: 0;
+}
+
+body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
         'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
         sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background: #f5f7fa;
+    background: var(--chat-bg);
+    color: var(--text-primary);
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+/* Main App Layout */
 .app {
-    min-height: 100vh;
+    display: flex;
+    height: 100vh;
+    width: 100%;
+    overflow: hidden;
+}
+
+.main-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    margin-left: 260px;
+    background: var(--chat-bg);
+}
+
+.chat-container {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 2rem;
     display: flex;
     flex-direction: column;
 }
 
-.app-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 2rem;
+/* Empty State */
+.empty-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
     text-align: center;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.app-header h1 {
-    margin: 0;
+.empty-state-content {
+    max-width: 600px;
+}
+
+.empty-state-content h1 {
     font-size: 2.5rem;
     font-weight: 700;
+    margin: 0 0 1rem;
+    color: var(--text-primary);
 }
 
-.app-subtitle {
-    margin: 0.5rem 0 0;
-    font-size: 1.1rem;
-    opacity: 0.95;
-}
-
-.app-main {
-    flex: 1;
-    padding: 2rem 1rem;
-    max-width: 1400px;
-    width: 100%;
-    margin: 0 auto;
-}
-
-.app-footer {
-    background: white;
-    border-top: 1px solid #e0e0e0;
-    padding: 1.5rem;
-    text-align: center;
-    color: #666;
-    font-size: 0.875rem;
-}
-
-.app-footer p {
+.empty-state-content p {
+    font-size: 1.125rem;
+    color: var(--text-secondary);
     margin: 0;
 }
 
+/* Messages List */
+.messages-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    animation: fadeInUp 0.3s ease;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Query Input Container - Fixed at bottom */
+.query-input-container {
+    padding: 1.5rem;
+    background: var(--chat-bg);
+    border-top: 1px solid var(--border-color);
+    flex-shrink: 0;
+}
+
+/* Scrollbar Styling */
+.chat-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.chat-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.chat-container::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+}
+
+.chat-container::-webkit-scrollbar-thumb:hover {
+    background: var(--text-tertiary);
+}
+
+/* Responsive - Mobile */
 @media (max-width: 768px) {
-    .app-header h1 {
-        font-size: 2rem;
+    .main-container {
+        margin-left: 0;
+        margin-top: 64px;
     }
 
-    .app-subtitle {
+    .chat-container {
+        padding: 1rem;
+    }
+
+    .empty-state-content h1 {
+        font-size: 1.75rem;
+    }
+
+    .empty-state-content p {
         font-size: 1rem;
     }
+}
 
-    .app-main {
-        padding: 1rem 0.5rem;
+@media (max-width: 480px) {
+    .app {
+        flex-direction: column;
+    }
+
+    .main-container {
+        margin-left: 0;
+        margin-top: 64px;
+    }
+
+    .chat-container {
+        padding: 0.75rem;
+    }
+
+    .query-input-container {
+        padding: 1rem;
     }
 }

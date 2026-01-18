@@ -2,9 +2,12 @@
     max-width: 900px;
     margin: 0 auto 2rem;
     padding: 1rem 1.5rem;
-    border-radius: 8px;
+    border-radius: 0.5rem;
     font-size: 0.95rem;
+    display: none;
 }
+
+/* Progress tracker is now embedded in ChatMessage - keeping for backward compatibility */
 
 .progress-loading {
     display: flex;
@@ -13,7 +16,7 @@
     color: #1976d2;
     background: #e3f2fd;
     padding: 1rem 1.5rem;
-    border-radius: 8px;
+    border-radius: 0.5rem;
 }
 
 .progress-spinner {
@@ -38,7 +41,7 @@
     color: #2e7d32;
     background: #e8f5e9;
     padding: 1rem 1.5rem;
-    border-radius: 8px;
+    border-radius: 0.5rem;
 }
 
 .complete-icon {
@@ -52,7 +55,7 @@
     color: #c62828;
     background: #ffebee;
     padding: 1rem 1.5rem;
-    border-radius: 8px;
+    border-radius: 0.5rem;
 }
 
 .error-icon {

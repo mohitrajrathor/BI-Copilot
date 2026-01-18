@@ -65,6 +65,9 @@ export function LineChartComponent({ config }: ChartProps) {
 }
 
 export function BarChartComponent({ config }: ChartProps) {
+    // Handle yAxis as string or array, use first element if array
+    const yAxisKey = Array.isArray(config.yAxis) ? config.yAxis[0] : config.yAxis;
+    
     return (
         <ResponsiveContainer width="100%" height={400}>
             <BarChart data={config.data}>
@@ -73,20 +76,23 @@ export function BarChartComponent({ config }: ChartProps) {
                 <YAxis />
                 <Tooltip />
                 <Legend />
-                <Bar dataKey={config.yAxis} fill={COLORS[0]} />
+                {yAxisKey && <Bar dataKey={yAxisKey} fill={COLORS[0]} />}
             </BarChart>
         </ResponsiveContainer>
     );
 }
 
 export function PieChartComponent({ config }: ChartProps) {
+    const valueColumn = config.valueColumn || "value";
+    const labelColumn = config.labelColumn || "label";
+    
     return (
         <ResponsiveContainer width="100%" height={400}>
             <PieChart>
                 <Pie
                     data={config.data}
-                    dataKey={config.valueColumn}
-                    nameKey={config.labelColumn}
+                    dataKey={valueColumn}
+                    nameKey={labelColumn}
                     cx="50%"
                     cy="50%"
                     outerRadius={120}
@@ -104,12 +110,17 @@ export function PieChartComponent({ config }: ChartProps) {
 }
 
 export function ScatterChartComponent({ config }: ChartProps) {
+    // Handle yAxis as string or array, use first element if array
+    const yAxisKey = Array.isArray(config.yAxis) ? config.yAxis[0] : config.yAxis;
+    const xAxisKey = config.xAxis || "x";
+    const yAxisName = yAxisKey || "y";
+    
     return (
         <ResponsiveContainer width="100%" height={400}>
             <ScatterChart>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey={config.xAxis} name={config.xAxis} />
-                <YAxis dataKey={config.yAxis} name={config.yAxis} />
+                <XAxis dataKey={xAxisKey} name={xAxisKey} />
+                <YAxis dataKey={yAxisKey} name={yAxisName} />
                 <Tooltip cursor={{ strokeDasharray: "3 3" }} />
                 <Legend />
                 <Scatter name="Data" data={config.data} fill={COLORS[0]} />

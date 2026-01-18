@@ -1,8 +1,8 @@
 /**
- * Query input component for natural language queries.
+ * Query input component - Chat composer style at bottom.
  */
 
-import { useState } from "react";
+import { useRef, useEffect, useState } from "react";
 import "./QueryInput.css";
 
 interface QueryInputProps {
@@ -10,64 +10,62 @@ interface QueryInputProps {
     isLoading: boolean;
 }
 
-const EXAMPLE_QUERIES = [
-    "Show me total sales by region",
-    "What are the top 10 customers by revenue?",
-    "Plot monthly revenue trends",
-    "Compare product categories by sales",
-];
-
 export function QueryInput({ onSubmit, isLoading }: QueryInputProps) {
     const [query, setQuery] = useState("");
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+    // Auto-expand textarea
+    useEffect(() => {
+        if (textareaRef.current) {
+            textareaRef.current.style.height = "auto";
+            const scrollHeight = textareaRef.current.scrollHeight;
+            textareaRef.current.style.height = Math.min(scrollHeight, 120) + "px";
+        }
+    }, [query]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (query.trim() && !isLoading) {
             onSubmit(query.trim());
+            setQuery("");
+            if (textareaRef.current) {
+                textareaRef.current.style.height = "auto";
+            }
         }
     };
 
-    const handleExampleClick = (exampleQuery: string) => {
-        setQuery(exampleQuery);
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+        if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
+            handleSubmit(e as any);
+        }
     };
 
     return (
         <div className="query-input-container">
-            <h2>Ask a Question About Your Data</h2>
-
             <form onSubmit={handleSubmit} className="query-form">
-                <input
-                    type="text"
+                <textarea
+                    ref={textareaRef}
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
-                    placeholder="e.g., Show me sales trends over time..."
-                    className="query-input"
+                    onKeyDown={handleKeyDown}
+                    placeholder="Ask a question about your data... (Ctrl+Enter to send)"
+                    className="query-textarea"
                     disabled={isLoading}
+                    rows={1}
                 />
                 <button
                     type="submit"
                     className="submit-button"
                     disabled={isLoading || !query.trim()}
+                    title="Send message"
                 >
-                    {isLoading ? "Analyzing..." : "Analyze"}
+                    {isLoading ? (
+                        <span className="spinner-icon">⟳</span>
+                    ) : (
+                        <span className="send-icon">→</span>
+                    )}
                 </button>
             </form>
-
-            <div className="example-queries">
-                <p className="example-label">Example queries:</p>
-                <div className="example-buttons">
-                    {EXAMPLE_QUERIES.map((example, index) => (
-                        <button
-                            key={index}
-                            onClick={() => handleExampleClick(example)}
-                            className="example-button"
-                            disabled={isLoading}
-                        >
-                            {example}
-                        </button>
-                    ))}
-                </div>
-            </div>
         </div>
     );
 }
