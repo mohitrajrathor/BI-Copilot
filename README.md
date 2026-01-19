@@ -43,6 +43,7 @@ Code → Build → Test → Docker → Deploy
 
 ### Steps
 
+```bash
    git clone https://github.com/mohitrajrathor/BI-Copilot.git
    
 
@@ -56,7 +57,8 @@ Code → Build → Test → Docker → Deploy
    cd frontend
    npm install
    npm run dev
-   
+
+```
 
 ## Usage
 
