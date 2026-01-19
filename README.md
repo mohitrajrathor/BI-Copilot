@@ -87,5 +87,5 @@ Code → Build → Test → Docker → Deploy
 
 ## Author
 
-**Mohit Raj Rathor**
+**Mohit Raj Rathor** | 
 [LinkedIn](https://www.linkedin.com/in/mohitrajrathor/)
