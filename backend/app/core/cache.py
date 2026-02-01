@@ -6,6 +6,7 @@ Provides caching utilities for schema, query plans, SQL results, and LLM respons
 import json
 import hashlib
 from typing import Any, Optional
+import asyncio
 from redis.asyncio import Redis
 from app.core.config import get_settings
 
