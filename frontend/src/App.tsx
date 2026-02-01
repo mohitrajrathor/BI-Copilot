@@ -2,7 +2,7 @@
  * Main BI-Copilot application component - ChatGPT style UI.
  */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { QueryInput } from "./components/QueryInput";
 import { ChatMessage } from "./components/ChatMessage";
 import { Sidebar } from "./components/Sidebar";
@@ -46,40 +46,50 @@ function App() {
   };
 
   // Update messages when result arrives
-  if (result && messages.length > 0) {
-    const lastMessage = messages[messages.length - 1];
-    if (lastMessage.isLoading) {
-      const updatedMessages = messages.map((msg) =>
-        msg.id === lastMessage.id
-          ? {
-              ...msg,
-              isLoading: false,
-              content: "Analysis complete",
-              result,
-            }
-          : msg
-      );
-      setMessages(updatedMessages);
+  useEffect(() => {
+    if (result) {
+      setMessages((prev) => {
+        if (prev.length === 0) return prev;
+        const lastMessage = prev[prev.length - 1];
+        if (lastMessage.isLoading) {
+          return prev.map((msg) =>
+            msg.id === lastMessage.id
+              ? {
+                ...msg,
+                isLoading: false,
+                content: "Analysis complete",
+                result,
+              }
+              : msg
+          );
+        }
+        return prev;
+      });
     }
-  }
+  }, [result]);
 
   // Handle errors
-  if (error && messages.length > 0) {
-    const lastMessage = messages[messages.length - 1];
-    if (lastMessage.isLoading) {
-      const updatedMessages = messages.map((msg) =>
-        msg.id === lastMessage.id
-          ? {
-              ...msg,
-              isLoading: false,
-              content: "",
-              error,
-            }
-          : msg
-      );
-      setMessages(updatedMessages);
+  useEffect(() => {
+    if (error) {
+      setMessages((prev) => {
+        if (prev.length === 0) return prev;
+        const lastMessage = prev[prev.length - 1];
+        if (lastMessage.isLoading) {
+          return prev.map((msg) =>
+            msg.id === lastMessage.id
+              ? {
+                ...msg,
+                isLoading: false,
+                content: "",
+                error,
+              }
+              : msg
+          );
+        }
+        return prev;
+      });
     }
-  }
+  }, [error]);
 
   const handleNewChat = () => {
     setMessages([]);
